@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Tile Matching Game</title>
+    <link rel="shortcut icon" type="image/jpg" href="Images/fevicon.PNG"/>
+    <style>
+        body {
+            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: url("Images/BG.jpg");
+            background-size: cover;
+        }
+
+        h1, h2 {
+            color: #222;
+            margin-bottom: 10px;
+        }
+
+        #instructions, #game {
+            display: block;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: #6200ea;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s ease;
+            box-shadow: 0px 0px 15px rgb(77, 76, 76);
+            margin-bottom: 30px;
+        }
+
+        button:hover {
+            background-color: #3700b3;
+        }
+
+        select {
+            font-size: 18px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #aaa;
+        }
+
+        .grid {
+            display: grid;
+            gap: 1px;
+            margin: 20px auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tile {
+            background-color: #000;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            perspective: 1000px;
+            transition: transform 0.6s ease-in-out, background-color 0.3s ease;
+            transform-style: preserve-3d;
+            width: var(--tile-size);
+            height: var(--tile-size);
+            font-size: calc(var(--tile-size) / 2.5);
+        }
+
+        .tile.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .tile-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .tile-back {
+            background-color: #8e44ad;
+            color: #fff;
+        }
+
+        .tile-front {
+            transform: rotateY(180deg);
+            visibility: hidden;
+            background-color:black;
+        }
+
+        .tile.flipped .tile-front {
+            visibility: visible;
+        }
+
+        .hidden {
+            background-color: #95a5a6;
+            cursor: pointer;
+        }
+
+        #playAgainBtn {
+            display: none;
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            font-size: 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #playAgainBtn:hover {
+            background-color: #2980b9;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        #timer, #moveCounter {
+            margin: 10px 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+        }
+
+        .modal button {
+            background-color: #e74c3c;
+            margin-top: 20px;
+        }
+        .icon{
+            height:300px;
+            object-fit:cover ;
+            object-position: center; 
+        }
+        footer{
+            background-color: black;
+            display:inline;
+            right:0px;
+            left:0px;
+            bottom:0px;
+        }
+        .bar{
+            background-color: #101657;
+           border: #000;
+           color: white;
+           padding-left: 20px;
+           padding-right:20px;
+           cursor: pointer;
+        
+        }
+        #bar:hover{
+            background-color: #2980b9;
+        }
+        .num{
+            border-color: grey;
+            border-width: 2px;
+        }
+        
+        
+
+    </style>
+</head>
+<body>
+
+    <div id="instructions">
+        <img src="Images/fevicon.PNG" class="icon">
+        <h1>Emoji Tile Matching Game</h1>
+        <p>Select a matrix size to start the game (2x2 to 8x8).</p>
+        <label for="matrixSize">Matrix Size:</label>
+        <select id="matrixSize" class="bar">
+            <option value="2" class="num">2x2</option>
+            <option value="3" class="num">3x3</option>
+            <option value="4" class="num">4x4</option>
+            <option value="5" class="num">5x5</option>
+            <option value="6" class="num">6x6</option>
+            <option value="7" class="num">7x7</option>
+            <option value="8" class="num">8x8</option>
+        </select>
+        <br><br>
+        <button onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="game" style="display: none;">
+        <h2>Match the tiles!</h2>
+        <div id="gridContainer" class="grid"></div>
+        <div id="timer">Time: 0s</div>
+        <div id="moveCounter">Moves: 0</div>
+    </div>
+
+    <!-- Congratulations Modal -->
+    <div id="congratulationsModal" class="modal">
+        <div class="modal-content">
+            <h2>Congratulations!</h2>
+            <p>You matched all the tiles in <span id="finalTime">0s</span> and <span id="finalMoves">0</span> moves.</p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Credits: Akshitha Reddy Banala & Ch. Spoorthi</p>
+    </footer>
+
+    <script>
+        const emojis = ["🍎", "🍌", "🍇", "🍓", 
+    "🌸", "🌼", "🌻", "🍁", 
+    "🍀", "🌈", "⭐️", "🌟", 
+    "🎈", "🎉", "🎁", "🎂", 
+    "🍫", "🍬", "🍩", "🍿", 
+    "🎨", "🎵", "📚", "✈️", 
+    "🪁", "⚽", "🏀", "🎮", 
+    "🕹️", "🎲", "🎯", "🎤" ];
+       
+      
+        let timer;
+        let moveCount = 0;
+        let startTime;
+        let timeElapsed = 0;
+        
+        function getRandomEmojis(count) {
+    const shuffledEmojis = [...emojis].sort(() => 0.5 - Math.random()); // Shuffle the emoji array
+    return shuffledEmojis.slice(0, count); // Return the required number of emojis
+}
+
+
+        function startGame() {
+            const size = document.getElementById('matrixSize').value;
+            const gridContainer = document.getElementById('gridContainer');
+            gridContainer.innerHTML = '';
+            gridContainer.style.gridTemplateColumns = `repeat(${size}, var(--tile-size))`;
+
+            // Set tile size dynamically
+            const tileSize = `${80 - size * 3}px`;  
+            document.documentElement.style.setProperty('--tile-size', tileSize);
+            const numPairs = (size * size) / 2;
+
+            // Get random emojis
+            const selectedEmojis = getRandomEmojis(numPairs);
+
+            let tiles = [];
+            selectedEmojis.forEach(emoji => {
+                tiles.push(emoji, emoji); // Add each emoji twice
+            });
+            
+            tiles = shuffle(tiles);
+
+            tiles.forEach(emoji => {
+                const tile = document.createElement('div');
+                tile.classList.add('tile', 'hidden');
+                tile.innerHTML = `
+                    <div class="tile-content tile-back"></div>
+                    <div class="tile-content tile-front">${emoji}</div>
+                `;
+                tile.dataset.emoji = emoji;
+                tile.addEventListener('click', flipTile);
+                gridContainer.appendChild(tile);
+            });
+
+            // Start timer
+            startTime = Date.now();
+            timer = setInterval(updateTimer, 1000);
+
+            document.getElementById('instructions').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        let flippedTiles = [];
+        let matchedPairs = 0;
+
+        function flipTile(e) {
+            const tile = e.target.closest('.tile');
+            if (tile.classList.contains('flipped') || flippedTiles.length === 2) return;
+            tile.classList.add('flipped');
+            flippedTiles.push(tile);
+
+            if (flippedTiles.length === 2) {
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            moveCount++;
+            document.getElementById('moveCounter').textContent = `Moves: ${moveCount}`;
+
+            const [tile1, tile2] = flippedTiles;
+            if (tile1.dataset.emoji === tile2.dataset.emoji) {
+                matchedPairs++;
+                flippedTiles = [];
+                if (matchedPairs === (document.getElementById('matrixSize').value * document.getElementById('matrixSize').value) / 2) {
+                    clearInterval(timer);
+                    showCongratulations();
+                }
+            } else {
+                setTimeout(() => {
+                    tile1.classList.remove('flipped');
+                    tile2.classList.remove('flipped');
+                    flippedTiles = [];
+                }, 1000);
+            }
+        }
+
+        function updateTimer() {
+            timeElapsed = Math.floor((Date.now() - startTime) / 1000);
+            document.getElementById('timer').textContent = `Time: ${timeElapsed}s`;
+        }
+
+        function showCongratulations() {
+            setTimeout(() => {
+        document.getElementById('finalTime').textContent = `${timeElapsed}s`;
+        document.getElementById('finalMoves').textContent = moveCount;
+        document.getElementById('congratulationsModal').style.display = 'flex';
+    }, 500); ;
+        }
+
+        function restartGame() {
+            matchedPairs = 0;
+            moveCount = 0;
+            timeElapsed = 0;
+            document.getElementById('timer').textContent = `Time: 0s`;
+            document.getElementById('moveCounter').textContent = `Moves: 0`;
+            document.getElementById('congratulationsModal').style.display = 'none';
+            document.getElementById('instructions').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
