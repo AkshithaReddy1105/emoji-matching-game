@@ -2,7 +2,8 @@
 <br>
 A fun and interactive tile-matching game built with HTML, CSS, and JavaScript! Match the emoji pairs before time runs out and challenge yourself to beat your best score.
 <br>
-# 🚀 Features
+<br>
+🚀 Features
 🧠 Memory-based gameplay – Flip and match emoji pairs
 <br>
 🎨 Simple and colorful UI – Visually appealing design
@@ -11,7 +12,8 @@ A fun and interactive tile-matching game built with HTML, CSS, and JavaScript! M
 <br>
 🔄 Responsive Design – Play on any device
 <br>
-# 📜 How to Play
+<br>
+📜 How to Play
 <br>
 Click on a tile to reveal an emoji.
 <br>
@@ -19,7 +21,8 @@ Find and match its pair.
 <br>
 Match all pairs your time is being tracked!
 <br>
-# 🛠️ Technologies Used
+<br>
+🛠️ Technologies Used
 <br>
 HTML – Structure of the game
 <br>
