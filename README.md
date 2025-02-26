@@ -12,14 +12,15 @@ A fun and interactive tile-matching game built with HTML, CSS, and JavaScript! M
 <br>
 🔄 Responsive Design – Play on any device
 <br>
-📜 How to Play
+# 📜 How to Play
+<br>
 Click on a tile to reveal an emoji.
 <br>
 Find and match its pair.
 <br>
 Match all pairs before time runs out!
 <br>
-🛠️ Technologies Used
+# 🛠️ Technologies Used
 <br>
 HTML – Structure of the game
 <br>
