@@ -1,5 +1,4 @@
-# emoji-matching-game
-🎮 Emoji Tile Matching Game
+# 🎮 Emoji Tile Matching Game
 <br>
 A fun and interactive tile-matching game built with HTML, CSS, and JavaScript! Match the emoji pairs before time runs out and challenge yourself to beat your best score.
 <br>
