@@ -18,7 +18,7 @@ Click on a tile to reveal an emoji.
 <br>
 Find and match its pair.
 <br>
-Match all pairs before time runs out!
+Match all pairs your time is being tracked!
 <br>
 # 🛠️ Technologies Used
 <br>
